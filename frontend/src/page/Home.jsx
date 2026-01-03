@@ -67,17 +67,21 @@ const Home = () => {
   });
 
   const fileFormik = useFormik({
-    initialValues: { file: null },
+    initialValues: { file: [] },
     validationSchema: fileSchema,
-    onSubmit: async (values, { resetForm, setFieldValue }) => {
-      if (!values.file) {
-        toast.error("File is required");
+    onSubmit: async (values, { resetForm }) => {
+      if (!values.files.length) {
+        toast.error("Please select files");
         return;
       }
 
       try {
         const formData = new FormData();
-        formData.append("file", values.file);
+
+        values.files.forEach((file) => {
+          formData.append("files", file);
+        });
+
         formData.append("type", "file");
         formData.append("parentId", parentId === "root" ? "" : parentId);
 
@@ -85,10 +89,11 @@ const Home = () => {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        toast.success("File uploaded!");
+        toast.success("Files uploaded successfully");
+
         resetForm();
-        setFieldValue("file", null);
         if (fileInputRef.current) fileInputRef.current.value = "";
+
         fetchItems();
         fetchStorage();
       } catch (err) {
@@ -150,9 +155,10 @@ const Home = () => {
         <form onSubmit={fileFormik.handleSubmit} className="flex gap-3 mb-6">
           <input
             type="file"
+            multiple
             ref={fileInputRef}
             onChange={(e) =>
-              fileFormik.setFieldValue("file", e.target.files[0])
+              fileFormik.setFieldValue("files", Array.from(e.target.files))
             }
             className="border p-2 rounded w-full"
           />
@@ -160,8 +166,8 @@ const Home = () => {
             Upload
           </button>
         </form>
-        {fileFormik.errors.file && (
-          <p className="text-red-500 text-sm mb-4">{fileFormik.errors.file}</p>
+        {fileFormik.errors.files && (
+          <p className="text-red-500 text-sm mt-1">{fileFormik.errors.files}</p>
         )}
 
         <form
