@@ -5,5 +5,7 @@ export const folderSchema = Yup.object({
 });
 
 export const fileSchema = Yup.object({
-  file: Yup.mixed().required("File is required"),
+  files: Yup.array()
+    .min(1, "At least one file is required")
+    .required("Files are required"),
 });
