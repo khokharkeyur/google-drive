@@ -5,12 +5,13 @@ import {
   deleteItem,
   getItemsByParent,
   getStorage,
+  uploadFolder,
 } from "../controller/item.controller.js";
 
 const router = express.Router();
 
 router.post("/", upload.single("file"), createItem);
-router.post("/folder-upload", upload.array("files"), createItem);
+router.post("/folder-upload", upload.array("files"), uploadFolder);
 
 router.get("/storage", getStorage);
 router.get("/:parentId", getItemsByParent);
