@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", upload.single("file"), createItem);
+router.post("/", upload.array("files", 10), createItem);
 router.post("/folder-upload", upload.array("files"), uploadFolder);
 
 router.get("/storage", getStorage);
